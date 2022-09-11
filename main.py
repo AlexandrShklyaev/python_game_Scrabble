@@ -15,16 +15,20 @@ def get_words() -> list:
         return [each_elem.strip() for each_elem in file_words.readlines()]
 
 
-def get_list_letters():
-    list_alfa = []
-    dict_alfa = {"а": 8, "б": 2, "в": 4, "г": 2, "д": 4, "е": 8, "ё": 1, "ж": 1, "з": 2, "и": 5, "й": 1, "к": 4,
-                 "л": 4, "м": 3, "н": 5, "о": 10, "п": 4, "р": 5, "с": 5, "т": 5, "у": 4, "ф": 1, "х": 1, "ц": 1,
-                 "ч": 1, "ш": 1, "щ": 1, "ъ": 1, "ы": 2, "ь": 2, "э": 1, "ю": 1, "я": 2}
-    for each_elem in dict_alfa:
-        for count_letter in range(dict_alfa[each_elem]):
-            list_alfa.append(each_elem)
-    return list_alfa
+def get_dict_letters():
+    dict_alfa = {"а": [8, 1], "б": [2, 3], "в": [4, 1], "г": [2, 3], "д": [4, 2], "е": [8, 1], "ё": [1, 3],
+                 "ж": [1, 5], "з": [2, 5], "и": [5, 1], "й": [1, 4], "к": [4, 2], "л": [4, 2], "м": [3, 2],
+                 "н": [5, 1], "о": [10, 1], "п": [4, 2], "р": [5, 1], "с": [5, 1], "т": [5, 1], "у": [4, 2],
+                 "ф": [1, 10], "х": [1, 5], "ц": [1, 5], "ч": [1, 5], "ш": [1, 8], "щ": [1, 10], "ъ": [1, 10],
+                 "ы": [2, 4], "ь": [2, 3], "э": [1, 8], "ю": [1, 8], "я": [2, 3]}
+    return dict_alfa
 
+def get_list_dict(dict_alfa):
+    new_list=[]
+    for each_elem in dict_alfa:
+        for count_letters in range(dict_alfa[each_elem][0]):
+            new_list.append(each_elem)
+    return new_list
 
 def get_new_list_letters(user_word, user_list_letters):
     list_alfa = []
@@ -51,13 +55,20 @@ def get_init_users(list_letters):
     print(f"Буквы игрока {user_name[1]}: {user_letters[1]}")
     return list_letters, user_name, user_letters
 
+def get_score(word, dict_alffa):
+    score=0
+    for each_letter in word:
+        score+=dict_alffa[each_letter][1]
+    return score
+
 
 def game():
     users_words = []
     total_score = [0, 0]
     list_words = get_words()
-    score_dict = {0: 0, 1: 0, 2: 0, 3: 3, 4: 6, 5: 7, 6: 8, 7: 9}
-    list_letters_base = get_list_letters()
+
+    dict_letters_base = get_dict_letters()
+    list_letters_base=get_list_dict(dict_letters_base)
     list_letters, user_name, user_letters = get_init_users(list_letters_base)
 
     step = 0
@@ -81,16 +92,13 @@ def game():
                 new_list_letters = get_new_list_letters(word, user_letters[numb_user])
                 if user_letters[numb_user] == new_list_letters:  # использовал не только свои буквы
                     new_alfa, list_letters = get_new_letters(list_letters, 1)
-                    print(" " * 3, "Слово нужно составлять из своих букв!", end="")
+                    print(" " * 3, "Слово нужно составлять из своих букв!")
                 else:  # использовал только свои буквы
                     new_alfa, list_letters = get_new_letters(list_letters, len(word) + 1)
                     print(" " * 3, "Есть такое слово!", end="")
                     users_words.append(word)
-                    try:
-                        total_score[numb_user] += score_dict[len(word)]
-                    except:
-                        total_score[numb_user] += (len(word) + 2)
-
+                    total_score[numb_user] += get_score(word, dict_letters_base)
+                    print(f" Ваши очки увеличены на {get_score(word, dict_letters_base)}.")
                 for each in new_alfa:
                     new_list_letters.append(each)
                 user_letters[numb_user] = new_list_letters
@@ -99,12 +107,6 @@ def game():
             print(" " * 3, "Такого слова нет!", end="")
             user_letters[numb_user].append(new_alfa[0])
 
-        if 3 < len(new_alfa) < 9:
-            print(f" Ваши очки увеличены на {score_dict[len(new_alfa) - 1]}.")
-        elif 8 < len(new_alfa):
-            print(f" Ваши очки увеличены на {len(new_alfa) + 1}.")
-        else:
-            print(f"Ваши очки не увеличены.")
         print(" " * 3, f"Вам добавлены буквы: {new_alfa}")
     return user_name, total_score
 
