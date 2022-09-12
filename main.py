@@ -123,32 +123,33 @@ def game():
         if word == "stop":  # остановка игры по кодовому слову
             break
 
+        new_list_letters = get_new_list_letters(word, user_letters[numb_user])
+        if user_letters[numb_user] == new_list_letters:  # использовал не только свои буквы
+            print(" " * 3, "Слово нужно составлять из своих букв! Попробуйте ещё раз")
+            step -= 1
+            continue  # даём игроку еще шанс
+
         if word in users_words or word2 in users_words:  # было ли уже такое слово
             print(" " * 3, "Такое слово уже было! Попробуйте ещё раз")
             step -= 1
             continue  # даём игроку еще шанс
-        else: # такого слова еще не было
 
-            if word in list_words or word2 in list_words:  # есть ли слово в файле
-                new_list_letters = get_new_list_letters(word, user_letters[numb_user])
-                if user_letters[numb_user] == new_list_letters:  # использовал не только свои буквы
-                    new_alfa, list_letters = get_new_letters(list_letters, 1)  # получим 1 букву
-                    print(" " * 3, "Слово нужно составлять из своих букв!")
-                else:  # использовал свои буквы
-                    new_alfa, list_letters = get_new_letters(list_letters, len(word) + 1)  # получим буквы +1
-                    print(" " * 3, "Есть такое слово!", end="")
-                    users_words.append(word)  # добавим слово в списов использованных слов
-                    total_score[numb_user] += get_score(word, dict_letters_base)  # увеличим очки игрока
-                    print(f" Ваши очки увеличены на {get_score(word, dict_letters_base)}.")
-                for each in new_alfa:
-                    new_list_letters.append(each)
-                user_letters[numb_user] = new_list_letters  # обновим список букв игрока
-            else:  # нет такого слова в файле
-                new_alfa, list_letters = get_new_letters(list_letters, 1)  # получим 1 букву
-                print(" " * 3, "Такого слова нет!", end="")
-                user_letters[numb_user].append(new_alfa[0])  # добавим 1 букву в список букв игрока
+        # использовал свои буквы и слова еще не было
+        if word in list_words or word2 in list_words:  # есть ли слово в файле
+            new_alfa, list_letters = get_new_letters(list_letters, len(word) + 1)  # получим буквы +1
+            print(" " * 3, "Есть такое слово!", end="")
+            users_words.append(word)  # добавим слово в списов использованных слов
+            total_score[numb_user] += get_score(word, dict_letters_base)  # увеличим очки игрока
+            print(f" Ваши очки увеличены на {get_score(word, dict_letters_base)}.")
+            for each in new_alfa:
+                new_list_letters.append(each)
+            user_letters[numb_user] = new_list_letters  # обновим список букв игрока
+        else:  # нет такого слова в файле
+            new_alfa, list_letters = get_new_letters(list_letters, 1)  # получим 1 букву
+            print(" " * 3, "Такого слова нет!")
+            user_letters[numb_user].append(new_alfa[0])  # добавим 1 букву в список букв игрока
 
-            print(" " * 3, f"Вам добавлены буквы: {new_alfa}")
+        print(" " * 3, f"Вам добавлены буквы: {new_alfa}")
     return user_name, total_score
 
 
